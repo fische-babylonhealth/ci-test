@@ -1,10 +1,44 @@
 kind: pipeline
 type: docker
-name: default
+name: frontend
 
 steps:
-- name: greeting
+- name: build
   image: alpine
   commands:
-  - echo hello
-  - echo world
+  - echo compiling frontend
+  - echo packaging frontend
+
+---
+kind: pipeline
+type: docker
+name: backend
+
+steps:
+- name: build
+  image: alpine
+  commands:
+  - echo compiling backend
+  - echo packaging backend
+
+---
+kind: gate
+name: approval
+
+depends_on:
+  - frontend
+  - backend
+
+---
+kind: pipeline
+type: docker
+name: after
+
+steps:
+  - name: notify
+    image: alpine
+    commands:
+      - echo notifying slack
+
+depends_on:
+  - approval
