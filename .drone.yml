@@ -21,25 +21,8 @@ steps:
   - echo compiling backend
   - echo packaging backend
 
----
-kind: gate
-name: approval
-type: docker
-
-depends_on:
-  - frontend
-  - backend
-
----
-kind: pipeline
-type: docker
-name: after
-
-steps:
-  - name: notify
-    image: alpine
-    commands:
-      - echo notifying slack
-
-depends_on:
-  - approval
+trigger:
+  event:
+  - promote
+  target:
+  - production
