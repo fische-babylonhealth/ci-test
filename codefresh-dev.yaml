@@ -1,0 +1,74 @@
+version: "1.0"
+
+stages:
+  - "clone"
+  - "build"
+  - "push"
+  - "deploy"
+
+steps:
+  clone:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: "fische-babylonhealth/ci-test"
+    revision: "${{CF_BRANCH}}"
+    stage: "clone"
+  build:
+    title: "Building"
+    image: "golang:1.14.0-alpine"
+    working_directory: "${{clone}}"
+    commands:
+      - echo building...
+    stage: "build"
+  lint:
+    title: "Linting"
+    image: "golang:1.14.0-alpine"
+    working_directory: "${{clone}}"
+    commands:
+      - echo linting...
+    stage: "build"
+  test:
+    title: "Testing"
+    image: "golang:1.14.0-alpine"
+    working_directory: "${{clone}}"
+    commands:
+      - echo testing...
+    stage: "build"
+
+  build_docker_image:
+    title: "Build docker image"
+    type: build
+    working_directory: "${{clone}}"
+    image_name: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    tag: '${{CF_SHORT_REVISION}}'
+    stage: "build"
+    when:
+      branch:
+        only:
+          - master
+  
+  push_docker_image:
+    title: "Push docker image"
+    stage: "push"
+    type: push
+    candidate: '${{build_docker_image}}'
+    tag: '${{CF_SHORT_REVISION}}'
+    when:
+      branch:
+        only:
+          - master
+
+  deploy:
+    title: Deploy to dev
+    stage: "deploy"
+    type: parallel
+    when:
+      branch:
+        only:
+          - master
+    steps:
+      deploy_dev_uk:
+        title: Deploy to dev-uk
+        image: "alpine"
+        commands:
+          - echo Deploying '${{build_docker_image}}':'${{CF_SHORT_REVISION}}' to dev-uk using shipcat...
