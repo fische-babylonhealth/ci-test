@@ -3,14 +3,12 @@ version: "1.0"
 steps:
   promote:
     title: "Promote commit ${{CF_SHORT_REVISION}} to version ${{CF_RELEASE_TAG}}"
-    stage: "push"
     type: push
     candidate: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}}'
     tag: '${{CF_RELEASE_TAG}}'
 
   deploy:
     title: Deploy to dev
-    stage: "deploy"
     image: "alpine"
     commands:
       - echo Deploying ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}:${{CF_RELEASE_TAG}} to dev-uk using shipcat...
