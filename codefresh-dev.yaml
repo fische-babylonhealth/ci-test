@@ -61,14 +61,10 @@ steps:
   deploy:
     title: Deploy to dev
     stage: "deploy"
-    type: parallel
     when:
       branch:
         only:
           - master
-    steps:
-      deploy_dev_uk:
-        title: Deploy to dev-uk
-        image: "alpine"
-        commands:
-          - echo Deploying ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}} to dev-uk using shipcat...
+    image: "alpine"
+    commands:
+      - echo Deploying ${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}:${{CF_SHORT_REVISION}} to dev-uk using shipcat...
