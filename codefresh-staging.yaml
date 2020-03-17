@@ -1,6 +1,12 @@
 version: "1.0"
 
 steps:
+  debug:
+    title: Deploy to dev
+    image: "alpine"
+    commands:
+      - env
+
   promote:
     title: "Promote commit ${{CF_SHORT_REVISION}} to version ${{CF_RELEASE_TAG}}"
     type: push
