@@ -77,3 +77,4 @@ steps:
       PIPELINE_ID: default/deploy
       CONTEXT:
         - dev-uk
+      DETACH: true
